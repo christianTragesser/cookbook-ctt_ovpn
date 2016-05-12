@@ -1,0 +1,10 @@
+name 'ctt_ovpn'
+maintainer 'The Authors'
+maintainer_email 'you@example.com'
+license 'all_rights'
+description 'Installs/Configures ctt_ovpn'
+long_description 'Installs/Configures ctt_ovpn'
+version '0.1.0'
+
+depends 'ctt_docker'
+depends 'docker', '~> 2.0'
