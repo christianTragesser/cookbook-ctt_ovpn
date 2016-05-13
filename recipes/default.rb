@@ -23,14 +23,21 @@ if node[:ctt_ovpn][:vpn_url] == nil
   node.override[:ctt_ovpn][:vpn_url] = node[:cloud][:public_ipv4]
 end
 
-bash 'initialize,configure,start openvpn container' do
+bash 'initialize openvpn container' do
+  code "docker run --volumes-from #{node[:ctt_ovpn][:data_container]} --rm kylemanna/openvpn ovpn_genconfig -u udp://#{node[:ctt_ovpn][:vpn_url]}"
+end
+
+
+bash 'configure openvpn container' do
   code <<-EOF
-  docker run --volumes-from #{node[:ctt_ovpn][:data_container]} --rm kylemanna/openvpn ovpn_genconfig -u udp://#{node[:ctt_ovpn][:vpn_url]}
-  #/bin/expect -c "spawn docker run --volumes-from #{node[:ctt_ovpn][:data_container]} --rm -it kylemanna/openvpn ovpn_initpki nopass; expect -re \"RSA CA]:\"; send \"test\r\"; expect eof"
-  #docker run --volumes-from #{node[:ctt_ovpn][:data_container]} -d -p 1194:1194/udp --cap-add=NET_ADMIN kylemanna/openvpn
+  /bin/expect -c "spawn docker run --volumes-from #{node[:ctt_ovpn][:data_container]} --rm -it kylemanna/openvpn ovpn_initpki nopass; expect -re \"RSA CA]:\"; send \"test\r\"; expect eof"
   EOF
 end
-=begin
+
+bash 'start openvpn container' do
+  code "docker run --volumes-from #{node[:ctt_ovpn][:data_container]} -d -p 1194:1194/udp --cap-add=NET_ADMIN kylemanna/openvpn"
+end
+
 bash 'generate and retrieve vpn client certs' do
   code <<-EOF
   docker run --volumes-from #{node[:ctt_ovpn][:data_container]} --rm -it kylemanna/openvpn easyrsa build-client-full #{node[:ctt_ovpn][:client_name]} nopass
@@ -38,4 +45,3 @@ bash 'generate and retrieve vpn client certs' do
   chown ec2-user. /home/ec2-user/#{node[:ctt_ovpn][:client_name]}.ovpn
   EOF
 end
-=end
