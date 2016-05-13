@@ -28,7 +28,7 @@ bash "initialize and configure #{node[:ctt_ovpn][:data_container]} container" do
   #/usr/bin/expect -c 'spawn docker run --volumes-from #{node[:ctt_ovpn][:data_container]} --rm -it kylemanna/openvpn ovpn_initpki; expect "Enter PEM pass phrase:"; send "qazwsx\r"; expect "Verifying - Enter PEM pass phrase:"; send "qazwsx\r"; expect "[Easy-RSA CA]:"; send "test\r"; expect "Enter pass phrase for /etc/openvpn/pki/private/ca.key:"; send "qazwsx\r"; expect eof'
   EOF
 end
-
+=begin
 docker_container 'openvpn' do
   command "ovpn_genconfig -u udp://#{node[:ctt_ovpn][:ext_addr]}"
   repo 'kylemanna/openvpn'
