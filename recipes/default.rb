@@ -27,10 +27,10 @@ bash 'initialize openvpn container' do
   code "docker run --volumes-from #{node[:ctt_ovpn][:data_container]} --rm kylemanna/openvpn ovpn_genconfig -u udp://#{node[:ctt_ovpn][:vpn_url]}"
 end
 
-
 bash 'configure openvpn container' do
   code <<-EOF
-  /bin/expect -c "spawn docker run --volumes-from #{node[:ctt_ovpn][:data_container]} --rm -it kylemanna/openvpn ovpn_initpki nopass; expect -re \"RSA CA]:\"; send \"test\r\"; expect eof"
+  /bin/expect -c 'spawn docker run --volumes-from #{node[:ctt_ovpn][:data_container]} --rm -it kylemanna/openvpn ovpn_initpki nopass; expect -re "RSA CA.:"; send "test\r"; expect eof'
+  sleep 60
   EOF
 end
 
