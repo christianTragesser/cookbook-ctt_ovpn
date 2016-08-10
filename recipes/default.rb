@@ -22,7 +22,7 @@ end
 
 bash 'create ovpn data volume container' do
   code "docker run --name #{node[:ctt_ovpn][:data_container]} -v /etc/openvpn busybox"
-  not_if{system("docker ps -a | grep #{node[:ctt_ovpn][:data_container]}")
+  not_if{system("docker ps -a | grep #{node[:ctt_ovpn][:data_container]}")}
 end
 
 if node[:ctt_ovpn][:vpn_url] == nil
