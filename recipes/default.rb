@@ -12,10 +12,17 @@ docker_image 'busybox'
 
 docker_image 'kylemanna/openvpn'
 
+=begin
 docker_container "#{node[:ctt_ovpn][:data_container]}" do
   repo 'busybox'
   volumes ['/etc/openvpn']
   action :run_if_missing
+end
+=end
+
+bash 'create ovpn data volume container' do
+  code "docker run --name #{node[:ctt_ovpn][:data_container]} -v /etc/openvpn busybox"
+  not_if{system("docker ps -a | grep #{node[:ctt_ovpn][:data_container]}")
 end
 
 if node[:ctt_ovpn][:vpn_url] == nil
